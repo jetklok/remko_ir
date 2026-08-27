@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Test Remko IR",
+      "type": "shell",
+      "command": "python -m pytest -q",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint Remko IR",
+      "type": "shell",
+      "command": "python -m ruff check . && python -m ruff format --check .",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

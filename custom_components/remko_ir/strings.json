@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "remote_topic": "Zigbee2MQTT device topic"
+        },
+        "data_description": {
+          "remote_topic": "The MQTT topic used to send commands to the IR remote."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This IR remote is already configured"
+    }
+  },
+  "entity": {
+    "climate": {
+      "rkl_495": {
+        "name": "RKL 495"
+      }
+    }
+  }
+}

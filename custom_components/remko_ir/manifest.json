@@ -1,0 +1,16 @@
+{
+  "domain": "remko_ir",
+  "name": "Remko IR",
+  "codeowners": [
+    "@jetklok"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "mqtt"
+  ],
+  "documentation": "https://github.com/jetklok/remko_ir",
+  "integration_type": "device",
+  "iot_class": "assumed_state",
+  "requirements": [],
+  "version": "0.1.0"
+}
