@@ -10,10 +10,7 @@ from .const import CONF_REMOTE_TOPIC, DOMAIN
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_REMOTE_TOPIC): vol.All(
-            str,
-            vol.Match(r"^(?=\S+$)[^+#]+$"),
-        ),
+        vol.Required(CONF_REMOTE_TOPIC): str,
     }
 )
 
@@ -30,6 +27,14 @@ class ConfigFlow(HomeAssistantConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         if user_input is not None:
             remote_topic = user_input[CONF_REMOTE_TOPIC]
+            if not remote_topic.strip() or any(
+                wildcard in remote_topic for wildcard in ("+", "#")
+            ):
+                return self.async_show_form(
+                    step_id="user",
+                    data_schema=STEP_USER_DATA_SCHEMA,
+                    errors={"base": "invalid_topic"},
+                )
             self._async_abort_entries_match({CONF_REMOTE_TOPIC: remote_topic})
             return self.async_create_entry(
                 title=f"Remko RKL 495 via {remote_topic}", data=user_input

@@ -12,6 +12,9 @@
     },
     "abort": {
       "already_configured": "This IR remote is already configured"
+    },
+    "error": {
+      "invalid_topic": "Enter a valid MQTT publish topic without wildcards"
     }
   },
   "entity": {
