@@ -145,7 +145,7 @@ def test_build_bytes_covers_all_on_states(
             0x00,
             0x00,
             0x00,
-            0x70 | expected_swing_bit | expected_fan_nibble,
+            (0x70 & ~0x20) | expected_swing_bit | expected_fan_nibble,
             (mode_nibble << 4) | (temperature - 16),
         ]
     )
@@ -164,6 +164,19 @@ def test_checksum_completes_nibble_sum() -> None:
     payload = RemkoProtocol.encode_frame(RemkoState())
 
     assert sum((byte >> 4) + (byte & 0x0F) for byte in payload) % 16 == 15
+
+
+def test_swing_changes_the_encoded_frame() -> None:
+    swing_off = RemkoProtocol.encode_frame(
+        RemkoState(power=RemkoPower.ON, swing=RemkoSwingMode.OFF)
+    )
+    swing_on = RemkoProtocol.encode_frame(
+        RemkoState(power=RemkoPower.ON, swing=RemkoSwingMode.ON)
+    )
+
+    assert swing_off[4] == 0x78
+    assert swing_on[4] == 0x58
+    assert swing_off != swing_on
 
 
 @pytest.mark.parametrize("temperature", [15, 31, 24.5, True])

@@ -66,7 +66,7 @@ class RemkoProtocol:
             RemkoFanMode.MEDIUM: 0x9,
             RemkoFanMode.LOW: 0xA,
         }[state.fan]
-        return 0x70 | swing_bit | lower_nibble
+        return (0x70 & ~0x20) | swing_bit | lower_nibble
 
     @classmethod
     def _build_byte_6(cls, state: RemkoState) -> int:
