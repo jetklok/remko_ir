@@ -5,6 +5,7 @@ import pytest
 from homeassistant.components.climate.const import (
     FAN_HIGH,
     SWING_ON,
+    ClimateEntityFeature,
     HVACMode,
 )
 from homeassistant.core import HomeAssistant, State
@@ -22,6 +23,18 @@ from custom_components.remko_ir.protocol import (
 )
 
 TOPIC = "zigbee2mqtt/living_room_ir/set"
+
+
+def test_climate_exposes_temperature_fan_and_swing_controls(
+    hass: HomeAssistant,
+) -> None:
+    entity = create_entity(hass)
+
+    assert entity.supported_features == (
+        ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.FAN_MODE
+        | ClimateEntityFeature.SWING_MODE
+    )
 
 
 def create_entity(hass: HomeAssistant) -> RemkoClimateEntity:

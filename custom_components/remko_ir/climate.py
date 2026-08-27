@@ -4,7 +4,7 @@ import json
 from typing import Any, override
 
 from homeassistant.components import mqtt
-from homeassistant.components.climate import ClimateEntity
+from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature
 from homeassistant.components.climate.const import (
     FAN_AUTO,
     FAN_HIGH,
@@ -50,6 +50,11 @@ class RemkoClimateEntity(ClimateEntity, RestoreEntity):
     _attr_min_temp = float(MIN_TEMPERATURE)
     _attr_max_temp = float(MAX_TEMPERATURE)
     _attr_target_temperature_step = 1.0
+    _attr_supported_features = (
+        ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.FAN_MODE
+        | ClimateEntityFeature.SWING_MODE
+    )
     _attr_hvac_modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.DRY, HVACMode.FAN_ONLY]
     _attr_fan_modes = [FAN_AUTO, FAN_HIGH, FAN_MEDIUM, FAN_LOW]
     _attr_swing_modes = [SWING_OFF, SWING_ON]
