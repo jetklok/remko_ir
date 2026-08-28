@@ -4,7 +4,7 @@ import json
 from typing import Any, override
 
 from homeassistant.components import mqtt
-from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature
+from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
     FAN_AUTO,
     FAN_HIGH,
@@ -12,6 +12,7 @@ from homeassistant.components.climate.const import (
     FAN_MEDIUM,
     SWING_OFF,
     SWING_ON,
+    ClimateEntityFeature,
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
