@@ -9,6 +9,7 @@
     "mqtt"
   ],
   "documentation": "https://github.com/jetklok/remko_ir",
+  "issue_tracker": "https://github.com/jetklok/remko_ir/issues",
   "integration_type": "device",
   "iot_class": "assumed_state",
   "requirements": [],
