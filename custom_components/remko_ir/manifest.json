@@ -11,6 +11,7 @@
   "documentation": "https://github.com/jetklok/remko_ir",
   "integration_type": "device",
   "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/jetklok/remko_ir/issues",
   "requirements": [],
   "version": "0.1.0"
 }
