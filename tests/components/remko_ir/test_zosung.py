@@ -100,6 +100,20 @@ def test_zosung_base64_round_trip() -> None:
     assert ZosungCodec.decode(ZosungCodec.encode(timings)) == timings
 
 
+def test_invalid_base64_is_rejected() -> None:
+    with pytest.raises(ValueError, match="base64"):
+        ZosungCodec.decode("not valid base64!")
+
+
+@pytest.mark.parametrize(
+    "data",
+    [bytes([0x00]), bytes([0xE0]), bytes([0xE0, 0xFF]), bytes([0x20])],
+)
+def test_truncated_zosung_blocks_are_rejected(data: bytes) -> None:
+    with pytest.raises(ValueError, match="Truncated"):
+        ZosungCodec.decompress(data)
+
+
 def test_remko_ir_code_round_trips_through_zosung_codec() -> None:
     state = RemkoState(
         power=RemkoPower.ON,
