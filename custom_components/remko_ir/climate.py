@@ -55,6 +55,8 @@ class RemkoClimateEntity(ClimateEntity, RestoreEntity):
         ClimateEntityFeature.TARGET_TEMPERATURE
         | ClimateEntityFeature.FAN_MODE
         | ClimateEntityFeature.SWING_MODE
+        | ClimateEntityFeature.TURN_ON
+        | ClimateEntityFeature.TURN_OFF
     )
     _attr_hvac_modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.DRY, HVACMode.FAN_ONLY]
     _attr_fan_modes = [FAN_AUTO, FAN_HIGH, FAN_MEDIUM, FAN_LOW]
@@ -71,6 +73,7 @@ class RemkoClimateEntity(ClimateEntity, RestoreEntity):
         }
         self._remote_topic = entry.data[CONF_REMOTE_TOPIC]
         self._attr_hvac_mode = HVACMode.OFF
+        self._last_hvac_mode: HVACMode | None = HVACMode.COOL
         self._attr_fan_mode = FAN_AUTO
         self._attr_swing_mode = SWING_OFF
         self._attr_target_temperature = 24.0
@@ -150,9 +153,36 @@ class RemkoClimateEntity(ClimateEntity, RestoreEntity):
         fan_mode = FAN_AUTO if hvac_mode != HVACMode.COOL else self.fan_mode or FAN_AUTO
         await self._async_send_command(hvac_mode=hvac_mode, fan_mode=fan_mode)
         self._attr_hvac_mode = hvac_mode
+        if hvac_mode != HVACMode.OFF:
+            self._last_hvac_mode = hvac_mode
         self._attr_fan_mode = fan_mode
         self._attr_fan_modes = self._fan_modes_for_hvac_mode(hvac_mode)
         self.async_write_ha_state()
+
+    async def async_turn_off(self) -> None:
+        """Turn the climate device off."""
+        current_hvac_mode = self.hvac_mode
+        if current_hvac_mode is not None and current_hvac_mode != HVACMode.OFF:
+            self._last_hvac_mode = current_hvac_mode
+        await self.async_set_hvac_mode(HVACMode.OFF)
+
+    async def async_turn_on(self) -> None:
+        """Turn the climate device on."""
+        current_hvac_mode = self.hvac_mode or HVACMode.OFF
+        last_hvac_mode = self._last_hvac_mode or HVACMode.COOL
+        next_hvac_mode: HVACMode = (
+            last_hvac_mode if current_hvac_mode == HVACMode.OFF else current_hvac_mode
+        )
+        if next_hvac_mode not in self.hvac_modes:
+            next_hvac_mode = HVACMode.COOL
+        await self.async_set_hvac_mode(next_hvac_mode)
+
+    async def async_toggle(self) -> None:
+        """Toggle the climate device on or off."""
+        if self.hvac_mode == HVACMode.OFF:
+            await self.async_turn_on()
+            return
+        await self.async_turn_off()
 
     @override
     async def async_set_temperature(self, **kwargs: Any) -> None:

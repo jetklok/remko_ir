@@ -214,7 +214,21 @@ def test_timings_encode_all_bits() -> None:
     assert timings[-3:] == [473, -3591, 473]
 
 
+@pytest.mark.parametrize("bits", ["0", "0" * 51, "0" * 51 + "2"])
+def test_invalid_bitstreams_are_rejected(bits: str) -> None:
+    with pytest.raises(ValueError):
+        RemkoProtocol._bits_to_timings(bits)
+
+
 def test_default_ir_frame_regression_vector() -> None:
     state = RemkoState(power=RemkoPower.ON)
 
     assert RemkoProtocol.encode_frame(state) == bytes.fromhex("8300000078080d")
+
+
+def test_unsupported_mode_is_rejected() -> None:
+    state = RemkoState()
+    object.__setattr__(state, "mode", "unsupported")
+
+    with pytest.raises(ValueError, match="Unsupported mode"):
+        RemkoProtocol._build_byte_6(state)
